@@ -2,7 +2,7 @@
   "UserConfig": {
     "Namespaces": [
       {
-        "Name": "currency-servicebus",
+        "Name": "sbemulatorns",
         "Queues": [],
         "Topics": [
           {
@@ -16,7 +16,7 @@
                 "Properties": {
                   "DeadLetteringOnMessageExpiration": false,
                   "DeadLetteringOnFilterEvaluationExceptions": true,
-                  "DefaultMessageTimeToLive": "P14D",
+                  "DefaultMessageTimeToLive": "PT1H",
                   "LockDuration": "PT1M",
                   "MaxDeliveryCount": 10,
                   "RequiresSession": false

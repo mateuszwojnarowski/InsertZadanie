@@ -56,7 +56,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - MongoDB__ConnectionString=mongodb://mongodb:27017
       - MongoDB__DatabaseName=CurrencyRates
-      - ServiceBus__ConnectionString=Endpoint=sb://currency-servicebus;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;
+      - ServiceBus__ConnectionString=Endpoint=sb://sbemulatorns;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;
       - NbpApi__BaseUrl=https://api.nbp.pl/api
     depends_on:
       - mongodb
@@ -73,7 +73,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__WalletDb=Server=sqlserver,1433;Database=WalletDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;
       - Redis__ConnectionString=redis:6379
-      - ServiceBus__ConnectionString=Endpoint=sb://currency-servicebus;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;
+      - ServiceBus__ConnectionString=Endpoint=sb://sbemulatorns;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;
       - RatesService__BaseUrl=http://currency-rates-service:8080
     depends_on:
       sqlserver:
