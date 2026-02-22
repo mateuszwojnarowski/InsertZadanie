@@ -10,11 +10,7 @@ public class ExchangeService : IExchangeService
         _rateCacheService = rateCacheService;
         _logger = logger;
     }
-
-    /// <summary>
-    /// Converts currency via PLN intermediary.
-    /// NBP Table B rates are "mid" rates: 1 unit of foreign currency = X PLN.
-    /// </summary>
+    
     public async Task<ExchangeResult> ConvertAsync(string fromCurrency, string toCurrency, decimal amount)
     {
         if (fromCurrency == toCurrency)

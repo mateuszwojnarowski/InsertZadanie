@@ -1,6 +1,5 @@
 namespace WalletService.DTOs;
 
-// Wallet
 public record WalletResponse(
     Guid Id,
     string Name,
@@ -10,7 +9,6 @@ public record WalletResponse(
 
 public record BalanceResponse(string CurrencyCode, decimal Amount);
 
-// Transactions
 public record BalanceUpdateResponse(string CurrencyCode, decimal NewBalance);
 
 public record ConvertResponse(

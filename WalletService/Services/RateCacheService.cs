@@ -30,7 +30,6 @@ public class RateCacheService : IRateCacheService
 
         await db.HashSetAsync(RatesHashKey, entries);
 
-        // Also store metadata
         await db.HashSetAsync(RatesHashKey, new[]
         {
             new HashEntry("__updated_at", DateTime.UtcNow.ToString("O")),
@@ -50,7 +49,6 @@ public class RateCacheService : IRateCacheService
 
         if (value.IsNullOrEmpty)
         {
-            // Fallback
             if (await FallbackFetchRatesAsync())
             {
                 value = await db.HashGetAsync(RatesHashKey, currencyCode);
@@ -70,7 +68,6 @@ public class RateCacheService : IRateCacheService
 
         if (entries.Length == 0)
         {
-            // Fallback
             if (await FallbackFetchRatesAsync())
             {
                 entries = await db.HashGetAllAsync(RatesHashKey);
@@ -81,7 +78,7 @@ public class RateCacheService : IRateCacheService
         foreach (var entry in entries)
         {
             var key = entry.Name.ToString();
-            if (key.StartsWith("__")) continue; // skip metadata
+            if (key.StartsWith("__")) continue;
 
             if (decimal.TryParse(entry.Value.ToString(), out var rate))
             {

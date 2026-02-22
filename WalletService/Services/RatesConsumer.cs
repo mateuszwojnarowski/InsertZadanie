@@ -36,7 +36,6 @@ public class RatesConsumer : BackgroundService
         await _processor.StartProcessingAsync(stoppingToken);
         _logger.LogInformation("RatesConsumer started listening on topic 'rates-updated', subscription 'wallet-service'");
 
-        // Keep alive until cancellation
         await Task.Delay(Timeout.Infinite, stoppingToken).ContinueWith(_ => { });
 
         await _processor.StopProcessingAsync();
@@ -67,7 +66,6 @@ public class RatesConsumer : BackgroundService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error processing RatesUpdatedEvent");
-            // Message will be retried by ServiceBus
         }
     }
 
