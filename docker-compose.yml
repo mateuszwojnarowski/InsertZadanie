@@ -1,0 +1,88 @@
+services:
+  mongodb:
+    image: mongo:8
+    container_name: currency-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    container_name: currency-sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=YourStrong!Passw0rd
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -C -Q "SELECT 1" || exit 1
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+
+  redis:
+    image: redis:8-alpine
+    container_name: currency-redis
+    ports:
+      - "6379:6379"
+
+  servicebus-emulator:
+    image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
+    container_name: currency-servicebus
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      - SQL_SERVER=sqlserver
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=YourStrong!Passw0rd
+    ports:
+      - "5672:5672"
+    volumes:
+      - ./sb-config.json:/ServiceBus_Emulator/ConfigFiles/Config.json
+
+  rates-service:
+    build:
+      context: .
+      dockerfile: RatesService/Dockerfile
+    container_name: currency-rates-service
+    ports:
+      - "5100:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - MongoDB__ConnectionString=mongodb://mongodb:27017
+      - MongoDB__DatabaseName=CurrencyRates
+      - ServiceBus__ConnectionString=Endpoint=sb://currency-servicebus;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;
+      - NbpApi__BaseUrl=https://api.nbp.pl/api
+    depends_on:
+      - mongodb
+      - servicebus-emulator
+
+  wallet-service:
+    build:
+      context: .
+      dockerfile: WalletService/Dockerfile
+    container_name: currency-wallet-service
+    ports:
+      - "5200:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__WalletDb=Server=sqlserver,1433;Database=WalletDb;User Id=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True;
+      - Redis__ConnectionString=redis:6379
+      - ServiceBus__ConnectionString=Endpoint=sb://currency-servicebus;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;
+      - RatesService__BaseUrl=http://currency-rates-service:8080
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      servicebus-emulator:
+        condition: service_started
+
+volumes:
+  mongodb_data:
+  sqlserver_data:

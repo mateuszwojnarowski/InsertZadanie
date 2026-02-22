@@ -1,0 +1,35 @@
+{
+  "UserConfig": {
+    "Namespaces": [
+      {
+        "Name": "currency-servicebus",
+        "Queues": [],
+        "Topics": [
+          {
+            "Name": "rates-updated",
+            "Properties": {
+              "MaxSizeInMegabytes": 1024
+            },
+            "Subscriptions": [
+              {
+                "Name": "wallet-service",
+                "Properties": {
+                  "DeadLetteringOnMessageExpiration": false,
+                  "DeadLetteringOnFilterEvaluationExceptions": true,
+                  "DefaultMessageTimeToLive": "P14D",
+                  "LockDuration": "PT1M",
+                  "MaxDeliveryCount": 10,
+                  "RequiresSession": false
+                },
+                "Rules": []
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "Logging": {
+      "Type": "File"
+    }
+  }
+}

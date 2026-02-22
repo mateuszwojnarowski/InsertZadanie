@@ -1,0 +1,8 @@
+**/bin
+**/obj
+**/.vs
+**/node_modules
+**/.git
+**/.idea
+**/docker_build*.txt
+**/build_errors*.txt
